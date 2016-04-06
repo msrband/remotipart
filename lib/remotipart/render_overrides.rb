@@ -14,8 +14,12 @@ module Remotipart
       render_without_remotipart *args
       if remotipart_submitted?
         textarea_body = response.content_type == 'text/html' ? html_escape(response.body) : response.body
-        response.body = %{<script type=\"text/javascript\">try{window.parent.document;}catch(err){document.domain=document.domain;}</script>#{textarea_body}}
-#        response.content_type = Mime[:html]
+        if response.content_type == 'text/html'
+          response.body = %{<script type=\"text/javascript\">try{window.parent.document;}catch(err){document.domain=document.domain;}</script>#{textarea_body}}
+        else
+          response.body = textarea_body
+        end
+        # response.content_type = Mime[:html]
       end
       response_body
     end
